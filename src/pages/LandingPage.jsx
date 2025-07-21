@@ -116,7 +116,7 @@ const LandingPage = () => {
             <div
               ref={carouselRef}
               className="flex items-center gap-8 whitespace-nowrap transition-transform duration-300"
-              style={{ transform: `translateX(-${scroll}px)` }}
+              style={{ transform: `translateX(-${scroll}px)`, touchAction: 'none', pointerEvents: 'none' }}
             >
               {[...partnerLogos, ...partnerLogos].map((logo, idx) => (
                 <img
