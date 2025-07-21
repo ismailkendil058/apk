@@ -19,6 +19,7 @@ import QuizPage from './pages/QuizPage';
 import ScheduleConsultationPage from './pages/ScheduleConsultationPage';
 import ResourcesPage from './pages/ResourcesPage';
 import ArticlePage from './pages/ArticlePage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles = ['student', 'admin'] }) => {
@@ -65,6 +66,7 @@ function App() {
             <Route path="/schedule-consultation" element={<ScheduleConsultationPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
             <Route path="/article/:title" element={<ArticlePage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
             {/* Protected Student Routes */}
             <Route

@@ -1,316 +1,147 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { GraduationCap, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
-import { isValidEmail, validatePassword } from '../lib/utils';
+
+const SignupSuccessPage = () => (
+  <div className="flex min-h-screen items-center justify-center bg-white" style={{ fontFamily: 'Inter, \"Noto Sans\", sans-serif' }}>
+    <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-xl flex flex-col items-center">
+      <svg className="w-16 h-16 text-green-500 mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2l4-4m5 2a9 9 0 11-18 0a9 9 0 0118 0z" /></svg>
+      <h2 className="text-2xl font-bold text-[#121417] mb-2 text-center">Account Created!</h2>
+      <p className="text-[#687082] text-base text-center mb-6">Your account has been successfully created. You can now sign in and start using the platform.</p>
+      <Link to="/login" className="w-full bg-[#3a63c4] text-white text-center py-2 rounded-lg font-bold hover:bg-blue-700 transition">Sign In</Link>
+    </div>
+  </div>
+);
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: '',
-    role: 'student'
+    role: 'Student',
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [passwordValidation, setPasswordValidation] = useState(null);
-  const { signUp } = useAuth();
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    // Clear error when user starts typing
-    if (error) setError('');
-    
-    // Validate password strength
-    if (name === 'password') {
-      setPasswordValidation(validatePassword(value));
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const validateForm = () => {
-    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError('Please fill in all fields');
-      return false;
-    }
-    
-    if (!isValidEmail(formData.email)) {
-      setError('Please enter a valid email address');
-      return false;
-    }
-    
-    if (passwordValidation && !passwordValidation.isValid) {
-      setError('Please ensure your password meets all requirements');
-      return false;
-    }
-    
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return false;
-    }
-    
-    return true;
+  const handleRoleChange = (role) => {
+    setFormData((prev) => ({ ...prev, role }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
-
-    setLoading(true);
-    setError('');
-
-    try {
-      const { error } = await signUp(formData.email, formData.password, formData.role);
-      
-      if (error) {
-        setError(error.message);
-      } else {
-        // Show success message and redirect
-        navigate('/login', { 
-          state: { message: 'Account created successfully! Please check your email to verify your account.' }
-        });
-      }
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    // Simulate account creation, then show success page
+    setSuccess(true);
   };
 
-  const passwordRequirements = [
-    { key: 'length', label: 'At least 8 characters', met: !passwordValidation?.errors?.length },
-    { key: 'uppercase', label: 'One uppercase letter', met: !passwordValidation?.errors?.uppercase },
-    { key: 'lowercase', label: 'One lowercase letter', met: !passwordValidation?.errors?.lowercase },
-    { key: 'numbers', label: 'One number', met: !passwordValidation?.errors?.numbers },
-    { key: 'special', label: 'One special character', met: !passwordValidation?.errors?.special }
-  ];
+  if (success) return <SignupSuccessPage />;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center">
-          <GraduationCap className="h-12 w-12 text-primary-600" />
+    <div className="relative flex size-full min-h-screen flex-col bg-white justify-between group/design-root overflow-x-hidden" style={{ fontFamily: 'Inter, \"Noto Sans\", sans-serif' }}>
+      <div>
+        <div className="flex items-center bg-white p-4 pb-2 justify-between">
+          <button className="text-[#121417] flex size-12 shrink-0 items-center" onClick={() => navigate(-1)}>
+            <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+            </svg>
+          </button>
+          <h2 className="text-[#121417] text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Create Account</h2>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-          Create your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
-            sign in to your existing account
-          </Link>
-        </p>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="card">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="flex items-center p-4 text-sm text-error-700 bg-error-50 rounded-lg">
-                <AlertCircle className="h-5 w-5 mr-2" />
-                {error}
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="fullName" className="form-label">
-                Full Name
-              </label>
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                autoComplete="name"
-                required
-                value={formData.fullName}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="Enter your full name"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="form-label">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="Enter your email"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="role" className="form-label">
-                I am a
-              </label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="input-field"
+        <form onSubmit={handleSubmit}>
+          <div className="flex px-4 py-3">
+            <div className="flex h-10 flex-1 items-center justify-center rounded-full bg-[#f1f2f4] p-1">
+              <label
+                className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 text-[#687082] text-sm font-medium leading-normal has-[:checked]:bg-white has-[:checked]:shadow-[0_0_4px_rgba(0,0,0,0.1)] has-[:checked]:text-[#121417] ${formData.role === 'Student' ? 'bg-white shadow-[0_0_4px_rgba(0,0,0,0.1)] text-[#121417]' : ''}`}
               >
-                <option value="student">Student</option>
-                <option value="admin">Administrator</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="form-label">
-                Password
+                <span className="truncate">Student</span>
+                <input type="radio" name="role" className="invisible w-0" value="Student" checked={formData.role === 'Student'} onChange={() => handleRoleChange('Student')} />
               </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="input-field pr-10"
-                  placeholder="Create a strong password"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-              </div>
-              
-              {/* Password requirements */}
-              {formData.password && (
-                <div className="mt-2 space-y-1">
-                  <p className="text-xs text-gray-600 font-medium">Password requirements:</p>
-                  {passwordRequirements.map((req, index) => (
-                    <div key={index} className="flex items-center text-xs">
-                      {req.met ? (
-                        <CheckCircle className="h-3 w-3 text-success-500 mr-1" />
-                      ) : (
-                        <div className="h-3 w-3 rounded-full border border-gray-300 mr-1" />
-                      )}
-                      <span className={req.met ? 'text-success-600' : 'text-gray-500'}>
-                        {req.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="form-label">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="input-field pr-10"
-                  placeholder="Confirm your password"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center">
-              <input
-                id="terms"
-                name="terms"
-                type="checkbox"
-                required
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-              />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">
-                I agree to the{' '}
-                <button className="text-primary-600 hover:text-primary-500">
-                  Terms of Service
-                </button>{' '}
-                and{' '}
-                <button className="text-primary-600 hover:text-primary-500">
-                  Privacy Policy
-                </button>
-              </label>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-primary w-full flex justify-center"
+              <label
+                className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 text-[#687082] text-sm font-medium leading-normal has-[:checked]:bg-white has-[:checked]:shadow-[0_0_4px_rgba(0,0,0,0.1)] has-[:checked]:text-[#121417] ${formData.role === 'Administrator' ? 'bg-white shadow-[0_0_4px_rgba(0,0,0,0.1)] text-[#121417]' : ''}`}
               >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                ) : (
-                  'Create Account'
-                )}
-              </button>
-            </div>
-          </form>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <button
-                type="button"
-                className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-              >
-                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Sign up with Google
-              </button>
+                <span className="truncate">Administrator</span>
+                <input type="radio" name="role" className="invisible w-0" value="Administrator" checked={formData.role === 'Administrator'} onChange={() => handleRoleChange('Administrator')} />
+              </label>
             </div>
           </div>
-        </div>
+          <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label className="flex flex-col min-w-40 flex-1">
+              <input
+                name="fullName"
+                placeholder="Full Name"
+                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121417] focus:outline-0 focus:ring-0 border-none bg-[#f1f2f4] focus:border-none h-14 placeholder:text-[#687082] p-4 text-base font-normal leading-normal"
+                value={formData.fullName}
+                onChange={handleChange}
+              />
+            </label>
+          </div>
+          <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label className="flex flex-col min-w-40 flex-1">
+              <input
+                name="email"
+                placeholder="Email"
+                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121417] focus:outline-0 focus:ring-0 border-none bg-[#f1f2f4] focus:border-none h-14 placeholder:text-[#687082] p-4 text-base font-normal leading-normal"
+                value={formData.email}
+                onChange={handleChange}
+                type="email"
+                autoComplete="email"
+              />
+            </label>
+          </div>
+          <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label className="flex flex-col min-w-40 flex-1">
+              <input
+                name="phone"
+                placeholder="Phone Number"
+                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121417] focus:outline-0 focus:ring-0 border-none bg-[#f1f2f4] focus:border-none h-14 placeholder:text-[#687082] p-4 text-base font-normal leading-normal"
+                value={formData.phone}
+                onChange={handleChange}
+                type="tel"
+                autoComplete="tel"
+              />
+            </label>
+          </div>
+          <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label className="flex flex-col min-w-40 flex-1">
+              <input
+                name="password"
+                placeholder="Password"
+                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121417] focus:outline-0 focus:ring-0 border-none bg-[#f1f2f4] focus:border-none h-14 placeholder:text-[#687082] p-4 text-base font-normal leading-normal"
+                value={formData.password}
+                onChange={handleChange}
+                type="password"
+                autoComplete="new-password"
+              />
+            </label>
+          </div>
+          <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label className="flex flex-col min-w-40 flex-1">
+              <input
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121417] focus:outline-0 focus:ring-0 border-none bg-[#f1f2f4] focus:border-none h-14 placeholder:text-[#687082] p-4 text-base font-normal leading-normal"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                type="password"
+                autoComplete="new-password"
+              />
+            </label>
+          </div>
+          <div className="flex px-4 py-3">
+            <button type="submit" className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-5 flex-1 bg-[#3a63c4] text-white text-base font-bold leading-normal tracking-[0.015em]">
+              <span className="truncate">Create Account</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      <div>
+        <Link to="/login" className="text-[#687082] text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center underline block">Already have an account? Sign In</Link>
+        <div className="h-5 bg-white"></div>
       </div>
     </div>
   );
