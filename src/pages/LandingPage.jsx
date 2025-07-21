@@ -16,17 +16,10 @@ const LandingPage = () => {
   const [modalLogo, setModalLogo] = useState(null);
   const visibleCount = 3;
   // Add state for drag/swipe
-  const [dragStartX, setDragStartX] = useState(null);
-  const [dragging, setDragging] = useState(false);
-  // Auto-scroll effect
-  useEffect(() => {
-    if (!autoScroll) return;
-    const interval = setInterval(() => {
-      setCarouselIndex((prev) => (prev + 1) % partnerLogos.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, [autoScroll, partnerLogos.length]);
-  // Replace index-based carousel with a smooth, continuous translateX animation.
+  // Remove drag state and handlers
+  // Remove handleDragStart, handleDragMove, handleDragEnd, and related state
+
+  // Add auto-scroll effect
   const [scroll, setScroll] = useState(0);
   const carouselRef = useRef(null);
   useEffect(() => {
@@ -44,14 +37,13 @@ const LandingPage = () => {
     animationFrame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrame);
   }, []);
-  // Add a useEffect to pause auto-scroll when dragging is true, and resume when dragging is false.
-  useEffect(() => {
-    if (dragging) {
-      setAutoScroll(false);
-    } else {
-      setAutoScroll(true);
-    }
-  }, [dragging]);
+
+  // Remove drag/swipe/manual navigation handlers for the carousel.
+  // Restore the auto-scroll effect using requestAnimationFrame to move the carousel from left to right only.
+  // Do not allow manual interaction; only auto-scroll.
+
+  // Remove scroll state and related animation logic.
+  // Use carouselIndex to control which logos are visible, and update it on drag/swipe or with left/right buttons if present.
   // Manual navigation handlers
   const handlePrev = () => {
     setAutoScroll(false);
@@ -60,28 +52,6 @@ const LandingPage = () => {
   const handleNext = () => {
     setAutoScroll(false);
     setCarouselIndex((prev) => (prev + 1) % partnerLogos.length);
-  };
-  // Handlers
-  const handleDragStart = (e) => {
-    setDragging(true);
-    setAutoScroll(false);
-    setDragStartX(e.type === 'touchstart' ? e.touches[0].clientX : e.clientX);
-  };
-  const handleDragMove = (e) => {
-    if (!dragging || dragStartX === null) return;
-    const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-    const diff = clientX - dragStartX;
-    if (Math.abs(diff) > 40) {
-      if (diff < 0) setCarouselIndex((prev) => (prev + 1) % partnerLogos.length);
-      else setCarouselIndex((prev) => (prev - 1 + partnerLogos.length) % partnerLogos.length);
-      setDragging(false);
-      setDragStartX(null);
-    }
-  };
-  const handleDragEnd = () => {
-    setDragging(false);
-    setDragStartX(null);
-    setTimeout(() => setAutoScroll(true), 1000); // Resume auto-scroll after 1s
   };
   return (
     <>
@@ -147,13 +117,6 @@ const LandingPage = () => {
               ref={carouselRef}
               className="flex items-center gap-8 whitespace-nowrap transition-transform duration-300"
               style={{ transform: `translateX(-${scroll}px)` }}
-              onMouseDown={handleDragStart}
-              onMouseMove={handleDragMove}
-              onMouseUp={handleDragEnd}
-              onMouseLeave={handleDragEnd}
-              onTouchStart={handleDragStart}
-              onTouchMove={handleDragMove}
-              onTouchEnd={handleDragEnd}
             >
               {[...partnerLogos, ...partnerLogos].map((logo, idx) => (
                 <img
