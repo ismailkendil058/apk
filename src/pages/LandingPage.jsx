@@ -44,6 +44,14 @@ const LandingPage = () => {
     animationFrame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrame);
   }, []);
+  // Add a useEffect to pause auto-scroll when dragging is true, and resume when dragging is false.
+  useEffect(() => {
+    if (dragging) {
+      setAutoScroll(false);
+    } else {
+      setAutoScroll(true);
+    }
+  }, [dragging]);
   // Manual navigation handlers
   const handlePrev = () => {
     setAutoScroll(false);
@@ -56,6 +64,7 @@ const LandingPage = () => {
   // Handlers
   const handleDragStart = (e) => {
     setDragging(true);
+    setAutoScroll(false);
     setDragStartX(e.type === 'touchstart' ? e.touches[0].clientX : e.clientX);
   };
   const handleDragMove = (e) => {
@@ -72,6 +81,7 @@ const LandingPage = () => {
   const handleDragEnd = () => {
     setDragging(false);
     setDragStartX(null);
+    setTimeout(() => setAutoScroll(true), 1000); // Resume auto-scroll after 1s
   };
   return (
     <>
