@@ -12,7 +12,6 @@ const LandingPage = () => {
     '/e.png',
   ];
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [autoScroll, setAutoScroll] = useState(true);
   const [modalLogo, setModalLogo] = useState(null);
   const visibleCount = 3;
   // Add state for drag/swipe
@@ -20,37 +19,13 @@ const LandingPage = () => {
   // Remove handleDragStart, handleDragMove, handleDragEnd, and related state
 
   // Add auto-scroll effect
-  const [scroll, setScroll] = useState(0);
-  const carouselRef = useRef(null);
-  useEffect(() => {
-    let animationFrame;
-    const animate = () => {
-      setScroll((prev) => {
-        const carousel = carouselRef.current;
-        if (!carousel) return prev;
-        const totalWidth = carousel.scrollWidth / 2;
-        if (prev >= totalWidth) return 0;
-        return prev + 0.7;
-      });
-      animationFrame = requestAnimationFrame(animate);
-    };
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
-  }, []);
-
-  // Remove drag/swipe/manual navigation handlers for the carousel.
-  // Restore the auto-scroll effect using requestAnimationFrame to move the carousel from left to right only.
-  // Do not allow manual interaction; only auto-scroll.
-
   // Remove scroll state and related animation logic.
   // Use carouselIndex to control which logos are visible, and update it on drag/swipe or with left/right buttons if present.
   // Manual navigation handlers
   const handlePrev = () => {
-    setAutoScroll(false);
     setCarouselIndex((prev) => (prev - 1 + partnerLogos.length) % partnerLogos.length);
   };
   const handleNext = () => {
-    setAutoScroll(false);
     setCarouselIndex((prev) => (prev + 1) % partnerLogos.length);
   };
   return (
@@ -113,12 +88,11 @@ const LandingPage = () => {
           )}
           <h2 className="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5 text-center">Who Trusts Us</h2>
           <div className="relative overflow-hidden w-full py-4 flex items-center justify-center">
-            <div
-              ref={carouselRef}
-              className="flex items-center gap-8 whitespace-nowrap transition-transform duration-300"
-              style={{ transform: `translateX(-${scroll}px)`, touchAction: 'none', pointerEvents: 'none' }}
-            >
-              {[...partnerLogos, ...partnerLogos].map((logo, idx) => (
+            <button onClick={handlePrev} className="absolute left-2 z-10 bg-white rounded-full shadow p-2 hover:bg-gray-100">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <div className="flex items-center gap-8 transition-transform duration-300" style={{ transform: `translateX(-${carouselIndex * 144}px)` }}>
+              {partnerLogos.concat(partnerLogos).map((logo, idx) => (
                 <img
                   key={idx}
                   src={logo}
@@ -128,6 +102,9 @@ const LandingPage = () => {
                 />
               ))}
             </div>
+            <button onClick={handleNext} className="absolute right-2 z-10 bg-white rounded-full shadow p-2 hover:bg-gray-100">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+            </button>
           </div>
           {modalLogo && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
