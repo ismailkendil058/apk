@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Learning App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .download-btn {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 18px;
+            margin: 20px 0;
+            transition: background 0.3s;
+        }
+        .download-btn:hover {
+            background: #45a049;
+        }
+        .steps {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Download Learning App</h1>
+        <p>Get the latest version of our learning platform for Android devices.</p>
+        
+        <a href="https://github.com/ismailkendil058/apk/actions" class="download-btn">
+            📥 Download APK
+        </a>
+        
+        <div class="steps">
+            <h3>📋 Installation Steps:</h3>
+            <div class="step">1. Click the download button above</div>
+            <div class="step">2. Go to "Actions" tab and find the latest build</div>
+            <div class="step">3. Download "app-release" from Artifacts</div>
+            <div class="step">4. Enable "Unknown sources" in Android settings</div>
+            <div class="step">5. Install the APK file</div>
+        </div>
+        
+        <div class="steps">
+            <h3>📱 System Requirements:</h3>
+            <div class="step">• Android 5.0 or higher</div>
+            <div class="step">• 50MB free storage</div>
+            <div class="step">• Internet connection</div>
+        </div>
+        
+        <p><small>Version 1.0.0 | Last updated: <span id="date"></span></small></p>
+    </div>
+    
+    <script>
+        document.getElementById('date').textContent = new Date().toLocaleDateString();
+    </script>
+</body>
+</html> 
